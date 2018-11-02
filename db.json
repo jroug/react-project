@@ -98,23 +98,6 @@
         "01"
       ],
       "description": "<p>This is a certified program by Athens Tech College, the first educational institution in Greece that specialises in computer science and ICT studies.</p><p>Participant’s registration (payment’s completion) implies full compliance and acceptance of Code.Learn Terms &amp; Conditions.</p>"
-    },
-    {
-      "id": "siKKefB",
-      "title": "test",
-      "imagePath": "https://www.codehub.gr/wp-content/uploads/2018/04/ScrumMaster_FB_Post_1200x1200.jpg",
-      "price": {
-        "normal": "342",
-        "early_bird": "122"
-      },
-      "dates": {
-        "start_date": "2018-07-07",
-        "end_date": "2018-07-07"
-      },
-      "duration": "4",
-      "open": true,
-      "instructors": [],
-      "description": "asdasd"
     }
   ],
   "instructors": [

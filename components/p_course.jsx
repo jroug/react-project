@@ -24,6 +24,20 @@ class Course extends React.Component {
         };
     }
 
+    deleteHandler = (e) => {  
+        var courseId =this.state.course[0].id;
+        fetch('http://localhost:3000/courses/' + courseId, {
+            method: 'DELETE',
+            headers : { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(function(response) {
+            alert('Course has been deleted!');
+        });
+    }
+
     componentDidMount() {
         var _this = this;
        
@@ -111,7 +125,7 @@ class Course extends React.Component {
                                         
                     <p>
                         <Button className="btn-primary">Edit</Button>
-                        <Button className="btn-danger">Delete</Button>
+                        <Button className="btn-danger" onClick={this.deleteHandler} >Delete</Button>
                     </p> 
 
                     <h2>Instructors</h2>
