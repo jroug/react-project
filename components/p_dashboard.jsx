@@ -54,12 +54,12 @@ const TableSells = ({courses}) => (
 const PanelMain = ({courses}) => {
     return(
         <Jumbotron>
-        <h3 style={{margin: "20px"}}>Last {courses.length} Courses</h3>
-        <Table  style={{ padding: "10px", border:"1px solid black"}} >
-            <TableNames />
-            <TableSells courses={courses} />
-        </Table>
-        <Button color="info" style={{float: "right"}} >View All</Button>
+            <h3 style={{margin: "20px"}}>Last {courses.length} Courses</h3>
+            <Table  style={{ padding: "10px", border:"1px solid black"}} >
+                <TableNames />
+                <TableSells courses={courses} />
+            </Table>
+            <Button color="info" style={{float: "right"}} >View All</Button>
         </Jumbotron>
     );
 }
