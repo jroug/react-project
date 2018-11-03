@@ -12,6 +12,12 @@ class AddNewCourse extends React.Component {
             _isNew = false;
         } 
         super();
+
+        // state has to tell us if we have a new course 
+        // or if we edit an old one
+        // state must also keep the instructors
+        // we need to populate them dynamically in the form
+
         this.state = {
             isNew: _isNew,
             course: {
@@ -37,7 +43,9 @@ class AddNewCourse extends React.Component {
 
     componentDidMount(){
         var _this = this;
-        if (!_this.state.isNew){
+
+       
+        if (!_this.state.isNew){ // for old project get the data from the server
             fetch('http://localhost:3000/courses/' + _this.state.course.id, {
                 headers : { 
                     'Content-Type': 'application/json',
@@ -50,7 +58,7 @@ class AddNewCourse extends React.Component {
                 _newState.course = myJsonInstr;
                 _this.setState( _newState );
             });
-        }else{
+        }else{ // for new project get the maximum id+1
             fetch('http://localhost:3000/courses?_sort=id&_order=desc&_limit=1', {
                 headers : { 
                     'Content-Type': 'application/json',
@@ -64,6 +72,8 @@ class AddNewCourse extends React.Component {
                 _this.setState( _newState );
             });
         }
+
+        // get instructors
         fetch('http://localhost:3000/instructors', {
                 headers : { 
                     'Content-Type': 'application/json',
@@ -82,25 +92,29 @@ class AddNewCourse extends React.Component {
         //console.log(event.target.name);
         const newState = {...this.state};
 
-        //special case
-        if (event.target.name=='instructors[]'){
+        
+        if (event.target.name=='instructors[]'){ //special case of checkboxes - instructors
             var _name = event.target;
             if (_name.checked) 
                 newState.course.instructors.push(_name.value);
             else 
                 newState.course.instructors.splice( newState.course.instructors.indexOf(_name.value), 1 );    
             console.log(newState.course.instructors)
-        }else if (event.target.type=='text'){
+
+        }else if (event.target.type=='text'){// text fields 
             var _name = event.target.name;
-            if ( _name.indexOf(".")>-1 ){
+            if ( _name.indexOf(".")>-1 ){ // for objects within objects like dates prices
                 var _nameParts = _name.split(".");
                 newState.course[_nameParts[0]][_nameParts[1]] =  event.target.value;
-            }else
+            }else{ // for simple cases
                 newState.course[_name] =  event.target.value;
-        }else if(event.target.type=='checkbox'){
+            }
+
+        }else if(event.target.type=='checkbox'){// for checkboxes
             newState.course[event.target.name] =  event.target.checked;
         }
         
+        // bind input with state
         this.setState( newState );
     }
  
@@ -120,15 +134,16 @@ class AddNewCourse extends React.Component {
         var _this = this;
         let _url = '';
         let _method = '';
-        if (!obj.isNew) {
+
+        if (!obj.isNew) { // put data for the edit action
             _url = 'http://localhost:3000/courses/' + this.state.course.id;
             _method = 'PUT';
-        }else{
+        }else{ // post data for adding a new course
             _url = 'http://localhost:3000/courses';
             _method = 'POST';
         }
             
- 
+        // do the request
         fetch(_url, {
             method: _method,
             body: dataToPost,

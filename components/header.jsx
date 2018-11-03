@@ -7,7 +7,7 @@ import Courses from "../components/p_courses.jsx";
 import Course from "../components/p_course.jsx";
  
 
-
+// here all the routing hapens
 const HeaderWidget = (props) => {
   let a = '';
   return (

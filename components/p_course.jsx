@@ -25,6 +25,7 @@ class Course extends React.Component {
     }
 
     editHandler = (e) => {
+        // on edit we just send the user to an other page
         location.href = '/editcourse/' + this.state.course[0].id;
     }
 
