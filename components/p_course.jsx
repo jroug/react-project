@@ -24,8 +24,12 @@ class Course extends React.Component {
         };
     }
 
+    editHandler = (e) => {
+        location.href = '/editcourse/' + this.state.course[0].id;
+    }
+
     deleteHandler = (e) => {  
-        var courseId =this.state.course[0].id;
+        var courseId = this.state.course[0].id;
         fetch('http://localhost:3000/courses/' + courseId, {
             method: 'DELETE',
             headers : { 
@@ -125,7 +129,7 @@ class Course extends React.Component {
                     <br />
                                         
                     <p>
-                        <Button className="btn-primary">Edit</Button>
+                        <Button className="btn-primary" onClick={this.editHandler} >Edit</Button>
                         <Button className="btn-danger" onClick={this.deleteHandler} >Delete</Button>
                     </p> 
 

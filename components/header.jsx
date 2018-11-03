@@ -31,6 +31,7 @@ const HeaderWidget = (props) => {
       <Route exact path="/" component={Dashboard} />
       <Route path="/courses" component={Courses} />
       <Route path="/addcourse" component={AddNewCourse} />
+      <Route path="/editcourse/:id" component={AddNewCourse} />
       <Route path="/course/:id" component={Course} />
     </>
   )

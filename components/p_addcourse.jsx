@@ -3,11 +3,19 @@ import { Badge, Jumbotron, Table, NavLink, Button  }  from 'reactstrap';
 import ConvertDate from "./convertDate.jsx";
 
 class AddNewCourse extends React.Component {
-    constructor() {
+    constructor({ match }) {
+        let _id=''; 
+        let _isNew=true;
+
+        if (match.params.id){
+            _id = match.params.id;
+            _isNew = false;
+        } 
         super();
         this.state = {
+            isNew: _isNew,
             course: {
-                id: "",
+                id: _id,
                 title: "",
                 imagePath: "",
                 price: {
@@ -27,9 +35,10 @@ class AddNewCourse extends React.Component {
         }
     }
 
-    componentWillMount(){
+    componentDidMount(){
         var _this = this;
-        fetch('http://localhost:3000/instructors', {
+        if (!_this.state.isNew){
+            fetch('http://localhost:3000/courses/' + _this.state.course.id, {
                 headers : { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -37,12 +46,12 @@ class AddNewCourse extends React.Component {
             })
             .then(function(response) { return response.json(); })
             .then(function(myJsonInstr) {
-                 const _newState = {..._this.state};
-                 _newState.instructors = myJsonInstr;
+                const _newState = {..._this.state};
+                _newState.course = myJsonInstr;
                 _this.setState( _newState );
             });
-        
-        fetch('http://localhost:3000/courses?_sort=id&_order=desc&_limit=1', {
+        }else{
+            fetch('http://localhost:3000/courses?_sort=id&_order=desc&_limit=1', {
                 headers : { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -54,7 +63,19 @@ class AddNewCourse extends React.Component {
                  _newState.course.id = parseInt(myJsonInstr[0].id) + 1;
                 _this.setState( _newState );
             });
-            
+        }
+        fetch('http://localhost:3000/instructors', {
+                headers : { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(myJsonInstr) {
+                 const _newState = {..._this.state};
+                 _newState.instructors = myJsonInstr;
+                _this.setState( _newState );
+            });            
     }
 
     changeInputHandler = (event) => {  
@@ -93,12 +114,23 @@ class AddNewCourse extends React.Component {
             return;
         }
         const obj = {...this.state};
-        console.log(obj.course);
+         
         var dataToPost = JSON.stringify(obj.course);
         //console.log(dataToPost);
-
-        fetch('http://localhost:3000/courses', {
-            method: 'post',
+        var _this = this;
+        let _url = '';
+        let _method = '';
+        if (!obj.isNew) {
+            _url = 'http://localhost:3000/courses/' + this.state.course.id;
+            _method = 'PUT';
+        }else{
+            _url = 'http://localhost:3000/courses';
+            _method = 'POST';
+        }
+            
+ 
+        fetch(_url, {
+            method: _method,
             body: dataToPost,
             headers : { 
                 'Content-Type': 'application/json',
@@ -110,8 +142,10 @@ class AddNewCourse extends React.Component {
         })
         .then(function(myJson) { 
             console.log(myJson);
-            alert('New Course Added!');
-            location.href="/course/" + myJson.id ;
+            let saveMessage = 'Course Added';
+            if (!_this.state.isNew) saveMessage = 'Course Updated';
+            alert(saveMessage);
+            location.href="/editcourse/" + myJson.id ;
         });
     }
 
@@ -149,7 +183,7 @@ class AddNewCourse extends React.Component {
                                     this.state.instructors.map(
                                         (k) => ( 
                                             <div key={k.id} >
-                                                <input type="checkbox" name="instructors[]" onChange={ this.changeInputHandler } value={k.id} />
+                                                <input checked={ Boolean( this.state.course.instructors.find( (v) =>  k.id==v ) ) } type="checkbox" name="instructors[]" onChange={ this.changeInputHandler } value={k.id} />
                                                 <span>{k.name.first} {k.name.last}</span>
                                             </div>
                                         )
@@ -179,7 +213,7 @@ class AddNewCourse extends React.Component {
                             </tr>
                             <tr>
                                 <td>Early Bird:</td>
-                                <td><input type="text" name="price.early_bird" value={this.state.course.price.early_bird} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="price.early_bird" value={ this.state.course.price.early_bird==null ? '' : this.state.course.price.early_bird } onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Normal:</td>
@@ -187,7 +221,13 @@ class AddNewCourse extends React.Component {
                             </tr>
                             <tr>
                                 <td></td>
-                                <td><Button color="info" style={{float: "right"}} >SAVE</Button></td>
+                                <td>
+                                    {
+                                        this.state.isNew
+                                        ? <Button color="info" style={{float: "right"}} >ADD NEW</Button>
+                                        : <Button color="info" style={{float: "right"}} >UPDATE</Button>
+                                    }
+                                </td>
                             </tr>
                         </tbody>
                     </Table> 
