@@ -35,6 +35,7 @@ class Course extends React.Component {
         })
         .then(function(response) {
             alert('Course has been deleted!');
+            location.href="/courses/";
         });
     }
 

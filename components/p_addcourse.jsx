@@ -6,36 +6,78 @@ class AddNewCourse extends React.Component {
     constructor() {
         super();
         this.state = {
-            id: "",
-            title: "",
-            imagePath: "",
-            price: {
-                normal: "",
-                early_bird: ""
+            course: {
+                id: "",
+                title: "",
+                imagePath: "",
+                price: {
+                    normal: "",
+                    early_bird: ""
+                },
+                dates: {
+                    start_date: "",
+                    end_date: ""
+                },
+                duration: "",
+                open: false,
+                instructors: [],
+                description: ""
             },
-            dates: {
-                start_date: "",
-                end_date: ""
-            },
-            duration: "",
-            open: false,
-            instructors: [],
-            description: ""
+            instructors: []
         }
     }
 
+    componentWillMount(){
+        var _this = this;
+        fetch('http://localhost:3000/instructors', {
+                headers : { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(myJsonInstr) {
+                 const _newState = {..._this.state};
+                 _newState.instructors = myJsonInstr;
+                _this.setState( _newState );
+            });
+        
+        fetch('http://localhost:3000/courses?_sort=id&_order=desc&_limit=1', {
+                headers : { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(myJsonInstr) {
+                 const _newState = {..._this.state};
+                 _newState.course.id = parseInt(myJsonInstr[0].id) + 1;
+                _this.setState( _newState );
+            });
+            
+    }
+
     changeInputHandler = (event) => {  
-        console.log(event.target.name);
+        //console.log(event.target.name);
         const newState = {...this.state};
-        if (event.target.type=='text'){
+
+        //special case
+        if (event.target.name=='instructors[]'){
+            var _name = event.target;
+            if (_name.checked) 
+                newState.course.instructors.push(_name.value);
+            else 
+                newState.course.instructors.splice( newState.course.instructors.indexOf(_name.value), 1 );    
+            console.log(newState.course.instructors)
+        }else if (event.target.type=='text'){
             var _name = event.target.name;
             if ( _name.indexOf(".")>-1 ){
                 var _nameParts = _name.split(".");
-                newState[_nameParts[0]][_nameParts[1]] =  event.target.value;
+                newState.course[_nameParts[0]][_nameParts[1]] =  event.target.value;
             }else
-                newState[_name] =  event.target.value;
+                newState.course[_name] =  event.target.value;
         }else if(event.target.type=='checkbox'){
-            newState[event.target.name] =  event.target.checked;
+            newState.course[event.target.name] =  event.target.checked;
         }
         
         this.setState( newState );
@@ -51,8 +93,8 @@ class AddNewCourse extends React.Component {
             return;
         }
         const obj = {...this.state};
-        console.log(obj);
-        var dataToPost = JSON.stringify(obj);
+        console.log(obj.course);
+        var dataToPost = JSON.stringify(obj.course);
         //console.log(dataToPost);
 
         fetch('http://localhost:3000/courses', {
@@ -67,7 +109,9 @@ class AddNewCourse extends React.Component {
             return response.json();
         })
         .then(function(myJson) { 
-          alert('New Course Added!');
+            console.log(myJson);
+            alert('New Course Added!');
+            location.href="/course/" + myJson.id ;
         });
     }
 
@@ -84,30 +128,38 @@ class AddNewCourse extends React.Component {
                             </tr>
                             <tr>
                                 <td>Title:</td>
-                                <td><input type="text" name="title" value={this.state.title} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="title" value={this.state.course.title} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Duration:</td>
-                                <td><input type="text" name="duration" value={this.state.duration} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="duration" value={this.state.course.duration} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Image Path:</td>
-                                <td><input type="text" name="imagePath" value={this.state.imagePath} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="imagePath" value={this.state.course.imagePath} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Bookable:</td>
-                                <td><input type="checkbox" name="open" checked={this.state.open} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="checkbox" name="open" checked={this.state.course.open} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Instructors:</td>
                                 <td>
-                                    <input type="checkbox" name="instructors"  value="01" />
-                                    <input type="checkbox" name="instructors"  value="02" />
+                                {
+                                    this.state.instructors.map(
+                                        (k) => ( 
+                                            <div key={k.id} >
+                                                <input type="checkbox" name="instructors[]" onChange={ this.changeInputHandler } value={k.id} />
+                                                <span>{k.name.first} {k.name.last}</span>
+                                            </div>
+                                        )
+                                    )
+                                }
                                 </td>
                             </tr>
                             <tr>
                                 <td>Desciption:</td>
-                                <td><input type="text" name="description" value={this.state.description} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="description" value={this.state.course.description} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>DATES</td>
@@ -115,11 +167,11 @@ class AddNewCourse extends React.Component {
                             </tr>
                             <tr>
                                 <td>Start Date:</td>
-                                <td><input type="text" name="dates.start_date" value={this.state.dates.start_date} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="dates.start_date" value={this.state.course.dates.start_date} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>End Date:</td>
-                                <td><input type="text" name="dates.end_date" value={this.state.dates.end_date} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="dates.end_date" value={this.state.course.dates.end_date} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>PRICE</td>
@@ -127,11 +179,11 @@ class AddNewCourse extends React.Component {
                             </tr>
                             <tr>
                                 <td>Early Bird:</td>
-                                <td><input type="text" name="price.early_bird" value={this.state.price.early_bird} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="price.early_bird" value={this.state.course.price.early_bird} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td>Normal:</td>
-                                <td><input type="text" name="price.normal" value={this.state.price.normal} onChange={ this.changeInputHandler } /></td>
+                                <td><input type="text" name="price.normal" value={this.state.course.price.normal} onChange={ this.changeInputHandler } /></td>
                             </tr>
                             <tr>
                                 <td></td>
