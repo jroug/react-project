@@ -5,6 +5,6 @@ import "./app.css";
 import App from "../components/app.jsx";
 
 ReactDOM.render(
-  <Router><App /></Router>,
+  <div><App /></div>,
   document.getElementById("app")
 );

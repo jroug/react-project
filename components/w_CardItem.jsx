@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Button, NavLink } from 'reactstrap';
 import ConvertDate from "./convertDate.jsx";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const CardItem = ({course}) => (
     <Card style={{float:"left", height:"500px",width:"300px", border: "1px solid green", padding:"10px", margin:"10px"}}>
@@ -25,7 +26,7 @@ const CardItem = ({course}) => (
                 - 
                 <ConvertDate dateString={course.dates.end_date} />
             </CardText>
-            <Button className="btn-info" onClick={ () => { location.href="/course/" + course.id } }>View</Button>
+            <Link className="btn btn-info" to={ "/course/" + course.id } >View</Link>
         </CardBody>
     </Card>
 );

@@ -1,5 +1,5 @@
 import React from "react";
-import {NavLink }  from 'reactstrap';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ConvertDate from "./convertDate.jsx";
 
 const TableSells = ({courses}) => (
@@ -27,7 +27,7 @@ const TableSells = ({courses}) => (
                  -
                  <ConvertDate dateString={course.dates.end_date} />
              </td> 
-             <td><NavLink href={"/course/" + course.id} >View</NavLink></td> 
+             <td><Link to={"/course/" + course.id} >View</Link></td> 
            </tr>
          ))}
     </tbody>

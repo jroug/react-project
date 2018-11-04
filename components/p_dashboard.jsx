@@ -31,6 +31,8 @@ class Dashboard extends React.Component {
 
     render() {
         return (
+            this.state.courses &&
+            this.state.stats &&
             <div>
                 <div className="row" style={{border: "1px solid red"}} >
                     {this.state.stats.map(item => (

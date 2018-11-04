@@ -1,7 +1,10 @@
 import React from "react";
+import { Nav, NavItem, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, NavLink }  from 'reactstrap';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import {  Jumbotron, Table, Button  }  from 'reactstrap';
 import TableNames from "./w_TableNames.jsx";
 import TableSells from "./w_TableSells.jsx";
+
 
 const PanelMain = ({courses}) => {
     return(
@@ -11,7 +14,7 @@ const PanelMain = ({courses}) => {
                 <TableNames />
                 <TableSells courses={courses} />
             </Table>
-            <Button color="info" style={{float: "right"}} >View All</Button>
+            <Link className="btn btn-info" style={{float: "right"}} to="/courses" >View All</Link>
         </Jumbotron>
     );
 }

@@ -6,6 +6,7 @@ import ConvertDate from "./convertDate.jsx";
 class Course extends React.Component {
     constructor({ match }) {
         super();
+        // console.log(match);
         this.state = { 
             filterId: match.params.id, 
             course: [], 
@@ -15,7 +16,7 @@ class Course extends React.Component {
 
     editHandler = (e) => {
         // on edit we just send the user to an other page
-        location.href = '/editcourse/' + this.state.course[0].id;
+        this.props.history.push('/editcourse/' + this.state.course[0].id);
     }
 
     deleteHandler = (e) => {  
@@ -27,9 +28,9 @@ class Course extends React.Component {
                 'Accept': 'application/json'
             }
         })
-        .then(function(response) {
+        .then((response) => {
             alert('Course has been deleted!');
-            location.href="/courses/";
+            this.props.history.push('/courses/');
         });
     }
 
@@ -40,7 +41,7 @@ class Course extends React.Component {
             'Accept': 'application/json'
           }
         })
-        .then(function(response) {
+        .then((response) => {
            return response.json();
         })
         .then((myJson) => {
@@ -84,7 +85,7 @@ class Course extends React.Component {
         }else{
             let course = this.state.course[0];
             let instructors = this.state.instructors;
-            console.log(instructors);
+            // console.log(instructors);
             return (
                 <Jumbotron style={{maxWidth:"1000px", margin:"auto", padding:"100px"}}>
                     <img src={course.imagePath} style={{ width:"100%" }} />

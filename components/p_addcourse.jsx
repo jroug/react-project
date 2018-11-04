@@ -97,7 +97,7 @@ class AddNewCourse extends React.Component {
                 newState.course.instructors.push(_name.value);
             else 
                 newState.course.instructors.splice( newState.course.instructors.indexOf(_name.value), 1 );    
-            console.log(newState.course.instructors)
+            //console.log(newState.course.instructors)
 
         }else if (event.target.type=='text'){// text fields 
             var _name = event.target.name;
@@ -154,7 +154,7 @@ class AddNewCourse extends React.Component {
             let saveMessage = 'Course Added';
             if (!this.state.isNew) saveMessage = 'Course Updated';
             alert(saveMessage);
-            location.href="/editcourse/" + myJson.id ;
+            this.props.history.push('/editcourse/' +  myJson.id );
         });
     }
 
