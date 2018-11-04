@@ -1,18 +1,7 @@
 import React  from "react";
-import { Badge, Jumbotron, Table, NavLink, Button  }  from 'reactstrap';
+import { Jumbotron, Button  }  from 'reactstrap';
+import InstructorsWidget from "./w_InstructorsWidget.jsx";
 import ConvertDate from "./convertDate.jsx";
-
-
-const InstructorsWidget = ({objInstr}) => {
-    return (
-        <>
-            <h3>{objInstr.name.first} {objInstr.name.last} (<ConvertDate dateString={objInstr.dob} />)</h3>
-            <h4>{objInstr.bio}</h4>
-            <h4>{objInstr.email}</h4>
-            <h4>{objInstr.linkedin}</h4>
-        </>
-    );
-}
 
 class Course extends React.Component {
     constructor({ match }) {
@@ -45,8 +34,6 @@ class Course extends React.Component {
     }
 
     componentDidMount() {
-        var _this = this;
-       
         fetch('http://localhost:3000/courses', {
           headers : { 
             'Content-Type': 'application/json',
@@ -56,10 +43,10 @@ class Course extends React.Component {
         .then(function(response) {
            return response.json();
         })
-        .then(function(myJson) {
+        .then((myJson) => {
             // get the correct course 
-            let filterCourse = myJson.filter( function(number) {
-                return number.id == _this.state.filterId;
+            let filterCourse = myJson.filter( (number) => {
+                return number.id == this.state.filterId;
             });
 
             fetch('http://localhost:3000/instructors', {
@@ -68,10 +55,10 @@ class Course extends React.Component {
                     'Accept': 'application/json'
                 }
             })
-            .then(function(response) {
+            .then((response) => {
                 return response.json();
             })
-            .then(function(myJsonInstr) {
+            .then((myJsonInstr) => {
                 //console.log( myJsonInstr );
                 let instrHelperArray = [];
                 filterCourse[0].instructors.filter( function(thisVal) {
@@ -83,16 +70,12 @@ class Course extends React.Component {
                 });
                 // console.log("instrHelperArray");
                 // console.log(instrHelperArray);
-                _this.setState({
+                this.setState({
                     course: filterCourse,
                     instructors: instrHelperArray
                 });
             });
-
-             
-
         });
-
      }
 
     render() {

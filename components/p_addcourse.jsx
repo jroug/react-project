@@ -1,6 +1,6 @@
 import React from "react";
-import { Badge, Jumbotron, Table, NavLink, Button  }  from 'reactstrap';
-import ConvertDate from "./convertDate.jsx";
+import { Jumbotron, Table, Button  }  from 'reactstrap';
+
 
 class AddNewCourse extends React.Component {
     constructor({ match }) {
@@ -42,21 +42,19 @@ class AddNewCourse extends React.Component {
     }
 
     componentDidMount(){
-        var _this = this;
-
-       
-        if (!_this.state.isNew){ // for old project get the data from the server
-            fetch('http://localhost:3000/courses/' + _this.state.course.id, {
+      
+        if (!this.state.isNew){ // for old project get the data from the server
+            fetch('http://localhost:3000/courses/' + this.state.course.id, {
                 headers : { 
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             })
-            .then(function(response) { return response.json(); })
-            .then(function(myJsonInstr) {
-                const _newState = {..._this.state};
+            .then((response) => { return response.json() })
+            .then((myJsonInstr) => {
+                const _newState = {... this.state};
                 _newState.course = myJsonInstr;
-                _this.setState( _newState );
+                this.setState( _newState );
             });
         }else{ // for new project get the maximum id+1
             fetch('http://localhost:3000/courses?_sort=id&_order=desc&_limit=1', {
@@ -65,11 +63,11 @@ class AddNewCourse extends React.Component {
                     'Accept': 'application/json'
                 }
             })
-            .then(function(response) { return response.json(); })
-            .then(function(myJsonInstr) {
-                 const _newState = {..._this.state};
+            .then((response) => { return response.json() })
+            .then((myJsonInstr) => {
+                 const _newState = {...this.state};
                  _newState.course.id = parseInt(myJsonInstr[0].id) + 1;
-                _this.setState( _newState );
+                 this.setState( _newState );
             });
         }
 
@@ -80,11 +78,11 @@ class AddNewCourse extends React.Component {
                     'Accept': 'application/json'
                 }
             })
-            .then(function(response) { return response.json(); })
-            .then(function(myJsonInstr) {
-                 const _newState = {..._this.state};
-                 _newState.instructors = myJsonInstr;
-                _this.setState( _newState );
+            .then((response) => { return response.json() })
+            .then((myJsonInstr) => {
+                const _newState = {...this.state};
+                _newState.instructors = myJsonInstr;
+                this.setState( _newState );
             });            
     }
 
@@ -131,7 +129,6 @@ class AddNewCourse extends React.Component {
          
         var dataToPost = JSON.stringify(obj.course);
         //console.log(dataToPost);
-        var _this = this;
         let _url = '';
         let _method = '';
 
@@ -152,13 +149,10 @@ class AddNewCourse extends React.Component {
                 'Accept': 'application/json'
             }
         })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(myJson) { 
-            console.log(myJson);
+        .then((response) => { return response.json() })
+        .then((myJson) => { 
             let saveMessage = 'Course Added';
-            if (!_this.state.isNew) saveMessage = 'Course Updated';
+            if (!this.state.isNew) saveMessage = 'Course Updated';
             alert(saveMessage);
             location.href="/editcourse/" + myJson.id ;
         });
